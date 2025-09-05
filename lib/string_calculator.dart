@@ -5,26 +5,50 @@ class StringCalculator {
     String nums = numbers;
     final delimiters = [',', '\n'];
 
+    // Handle custom delimiter declaration
     if (nums.startsWith('//')) {
       final newlineIndex = nums.indexOf('\n');
-      final delimiter = nums.substring(2, newlineIndex);
-      delimiters.add(delimiter);
+      if (newlineIndex == -1) {
+        throw FormatException(
+            'Invalid input: missing newline after delimiter declaration');
+      }
+
+      final delimiterDef = nums.substring(2, newlineIndex);
+
+      // Regex to support multi-character delimiters inside []
+      final bracketReg = RegExp(r'\[([^\]]+)\]');
+      final matches =
+          bracketReg.allMatches(delimiterDef).map((m) => m.group(1)!).toList();
+
+      if (matches.isNotEmpty) {
+        // Handles multi-character delimiters like [***]
+        delimiters.addAll(matches);
+      } else {
+        // Handles single-character delimiters like ";"
+        delimiters.add(delimiterDef);
+      }
+
       nums = nums.substring(newlineIndex + 1);
     }
 
-    final parts = nums.split(RegExp(delimiters.map(RegExp.escape).join('|')));
+    // Split input based on delimiters
+    final pattern = RegExp(delimiters.map((d) => RegExp.escape(d)).join('|'));
+    final parts = nums.split(pattern);
 
     final negatives = <int>[];
     var sum = 0;
 
-    for (final p in parts) {
-      final n = int.parse(p);
+    for (final part in parts) {
+      final token = part.trim();
+      if (token.isEmpty) continue;
+      final n = int.parse(token);
       if (n < 0) negatives.add(n);
       sum += n;
     }
 
     if (negatives.isNotEmpty) {
-      throw FormatException('negative numbers not allowed ${negatives.join(',')}');
+      throw FormatException(
+          'negative numbers not allowed ${negatives.join(',')}');
     }
 
     return sum;

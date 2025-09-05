@@ -47,4 +47,10 @@ void main() {
     );
   });
 
+    test('custom multi-character delimiter using brackets', () {
+    final calc = StringCalculator();
+    expect(calc.add('//[***]\n1***2***3'), 6);
+  });
+
+
 }
