@@ -36,4 +36,15 @@ void main() {
     expect(() => calc.add('1,-2,3'), throwsA(isA<FormatException>()));
   });
 
+  test('exception message contains all negatives', () {
+    final calc = StringCalculator();
+    expect(
+      () => calc.add('1,-2,3,-4'),
+      throwsA(predicate((e) =>
+          e is FormatException &&
+          e.message.contains('-2') &&
+          e.message.contains('-4'))),
+    );
+  });
+
 }
