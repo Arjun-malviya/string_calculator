@@ -13,6 +13,20 @@ class StringCalculator {
     }
 
     final parts = nums.split(RegExp(delimiters.map(RegExp.escape).join('|')));
-    return parts.map(int.parse).reduce((a, b) => a + b);
+
+    final negatives = <int>[];
+    var sum = 0;
+
+    for (final p in parts) {
+      final n = int.parse(p);
+      if (n < 0) negatives.add(n);
+      sum += n;
+    }
+
+    if (negatives.isNotEmpty) {
+      throw FormatException('negative numbers not allowed ${negatives.join(',')}');
+    }
+
+    return sum;
   }
 }
