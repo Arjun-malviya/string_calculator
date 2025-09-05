@@ -16,4 +16,9 @@ void main() {
     final calc = StringCalculator();
     expect(calc.add('1,5'), 6);
   });
+
+  test('any amount of comma-separated numbers', () {
+    final calc = StringCalculator();
+    expect(calc.add('1,2,3,4'), 10);
+  });
 }
